@@ -52,3 +52,4 @@ if __name__ == '__main__':
     cv = CrossValidation(df,target_cols = ['target'])
     df_split = cv.split()
     print(df_split.head())
+    print(df_split.kfold.value_counts())
