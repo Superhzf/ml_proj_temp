@@ -15,17 +15,19 @@ class CrossValidation:
     def __init__(
             self,
             df,
+            shuffle,
             target_cols,
             problem_type='binary_classification',
+            multilabel_delimiter=',',
             num_folds=5,
-            shuffle,
             random_state=42):
         self.dataframe = df
         self.target_cols = target_cols
         self.num_target = len(target_cols)
         self.problem_type = problem_type
-        self.num_folds = num_folds
         self.shuffle = shuffle
+        self.multilabel_delimiter=multilabel_delimiter
+        self.num_folds = num_folds
         self.random_state = random_state
 
         if self.shuffle is True:
@@ -64,6 +66,20 @@ class CrossValidation:
             self.dataframe.loc[:len(self.dataframe)-num_holdout_samples,'kfold']=0
             self.dataframe.loc[len(self.dataframe)-num_holdout_samples:,'kfold']=1 #holdout set,
 
+        elif self.problem_type == 'multilabel_classification':
+            """
+            The format should be like this:
+            id, target
+            1   1,2,3
+            2   1,3
+            3   2,4
+            """
+            if self.num_target!=1:
+                raise Exception("Invalid number of targets for this problem")
+            targets = self.dataframe[self.target_cols[0]].apply(lambda x:len(str(x).split(self.multilabel_delimiter)))
+            kf = model_selection.StratifiedKFold(n_splits=self.num_folds,shuffle=False)
+            for fold,(train_idx,val_idx) in enumerate(kf.split(X=self.dataframe,y=targets):
+                self.dataframe.loc[val_idx,'kfold'] = fold
 
         else:
             raise Exception('Problem type not understood')
