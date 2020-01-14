@@ -48,6 +48,15 @@ class CrossValidation:
                     self.dataframe.loc[val_idx,'kfold'] = fold
 
         elif self.problem_type == 'single_col_regression':
+            if self.num_target != 1:
+                raise Exception('Invalid number of targets for {} problem!'.format(self.problem_type))
+            target = self.target_cols[0]
+            kf = model_selection.KFold(n_splits = self.num_folds)
+            for fold,(train_idx,val_idx) in enumerate(kf.split(X=self.dataframe,y=self.dataframe[target].values)):
+                self.dataframe.loc[val_idx,'kfold'] = fold
+
+        else:
+            raise Exception('Problem type not understood')
 
 
         return self.dataframe
