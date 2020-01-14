@@ -2,8 +2,8 @@ from sklearn import model_selection
 import pandas as pd
 
 """
-- binary classification
-- multi class classification
+--- binary classification
+--- multi class classification
 - multi label classification
 - single column regression
 - multi column regression
@@ -34,7 +34,9 @@ class CrossValidation:
         self.dataframe['kfold'] = -1
 
     def split(self):
-        if self.problem_type == 'binary_classification':
+        if self.problem_type in ['binary_classification','multiclass_classification']:
+            if self.num_target != 1:
+                raise Exception('Invalid number of targets for {} problem!'.format(self.problem_type))
             target = self.target_cols[0]
             unique_values = self.dataframe[target].nunique()
             if unique_values == 1:
@@ -44,6 +46,9 @@ class CrossValidation:
                                                      shuffle=False)
                 for fold,(train_idx,val_idx) in enumerate(kf.split(X=self.dataframe,y=self.dataframe[target].values)):
                     self.dataframe.loc[val_idx,'kfold'] = fold
+
+        elif self.problem_type == 'single_col_regression':
+
 
         return self.dataframe
 
