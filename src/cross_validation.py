@@ -4,7 +4,7 @@ import pandas as pd
 """
 --- binary classification
 --- multi class classification
-- multi label classification
+--- multi label classification
 --- single column regression
 --- multi column regression
 --- holdout based, this is important for time series data
